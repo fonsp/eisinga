@@ -1,2 +1,0 @@
-/usr/bin/avr-ar cr libnano328_I2Cdev.a  CMakeFiles/nano328_I2Cdev.dir/I2Cdev/I2Cdev.cpp.obj
-/usr/bin/avr-ranlib libnano328_I2Cdev.a
