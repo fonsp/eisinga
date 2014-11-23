@@ -1,0 +1,2 @@
+/usr/bin/avr-ar cr libnano328_LiquidCrystal.a  CMakeFiles/nano328_LiquidCrystal.dir/usr/share/arduino/libraries/LiquidCrystal/LiquidCrystal.cpp.obj
+/usr/bin/avr-ranlib libnano328_LiquidCrystal.a

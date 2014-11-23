@@ -1,0 +1,2 @@
+/usr/bin/avr-ar cr libnano328_main.a  CMakeFiles/nano328_main.dir/BMP085.cpp.obj CMakeFiles/nano328_main.dir/HMC5883L.cpp.obj CMakeFiles/nano328_main.dir/I2Cdev.cpp.obj CMakeFiles/nano328_main.dir/main_lib.cpp.obj CMakeFiles/nano328_main.dir/main.cpp.obj CMakeFiles/nano328_main.dir/Wire.cpp.obj CMakeFiles/nano328_main.dir/ADXL345.cpp.obj
+/usr/bin/avr-ranlib libnano328_main.a

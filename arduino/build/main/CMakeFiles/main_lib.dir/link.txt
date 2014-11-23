@@ -1,0 +1,2 @@
+/usr/bin/avr-ar cr libmain_lib.a  CMakeFiles/main_lib.dir/main_lib.cpp.obj
+/usr/bin/avr-ranlib libmain_lib.a

@@ -1,0 +1,2 @@
+/usr/bin/avr-ar cr libnano328_Wire.a  CMakeFiles/nano328_Wire.dir/usr/share/arduino/libraries/Wire/Wire.cpp.obj CMakeFiles/nano328_Wire.dir/usr/share/arduino/libraries/Wire/utility/twi.c.obj
+/usr/bin/avr-ranlib libnano328_Wire.a
