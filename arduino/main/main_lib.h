@@ -4,6 +4,9 @@
 #include "I2Cdev.h"
 #include "ADXL345.h"
 #include "HMC5883L.h"
+#include "DS1307.h"
+#include "eMath.cpp"
+#include "math.h"
 
 #define LED_PIN 13
 #define BTN_PIN 7
@@ -14,26 +17,35 @@
 #define mGain 92		  //in nT/LSB (100.000 / gain in LSB/Gauss)
 
 #define DEBUG
+//#define SETTIME
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
 ADXL345 accel;
 HMC5883L mag;
+DS1307 rtc;
 int16_t rawx, rawy, rawz;
 double x, y, z, roll, pitch;
 bool blinkState = false;
 
-int16_t xOffsetA, yOffsetA, zOffsetA, xOffsetM, yOffsetM, zOffsetM;
+XYZ aData, mData, aOffset, mOffset;
 
 int16_t xScaleA = 310;
 int16_t yScaleA = 310;
 int16_t zScaleA = 280;
 
+uint16_t year;
+uint8_t month, day, dow, hours, minutes, seconds;
+double dayfrac;
 
 void serialSetup();
+void rtcSetup();
 void lcdSetup();
 void sensorSetup();
 void calibrate();
+void retrieveRaw(XYZ *aData, XYZ *mData);
+void displayRetrieveRaw(char n, XYZ *aData, XYZ *mData);
 void pause();
 
+void updateRtc();
 void readData();
