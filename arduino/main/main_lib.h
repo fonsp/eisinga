@@ -25,7 +25,7 @@ ADXL345 accel;
 HMC5883L mag;
 DS1307 rtc;
 int16_t rawx, rawy, rawz;
-double x, y, z, roll, pitch;
+double temp, xzlength, yaw, pitch, spitch, cpitch, roll, sroll, croll, lst, ra, dec;
 bool blinkState = false;
 
 XYZ aData, mData, aOffset, mOffset;
@@ -44,8 +44,9 @@ void lcdSetup();
 void sensorSetup();
 void calibrate();
 void retrieveRaw(XYZ *aData, XYZ *mData);
+void retrieveRaw(XYZ *mData);
 void displayRetrieveRaw(char n, XYZ *aData, XYZ *mData);
+void outputSerialData();
 void pause();
-
 void updateRtc();
 void readData();

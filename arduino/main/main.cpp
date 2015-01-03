@@ -12,12 +12,14 @@
 void setup() {
 	serialSetup();
 	rtcSetup();
+	updateRtc();
 	lcdSetup();
 	sensorSetup();
 	calibrate();
 }
 
 void loop() {
-	readData();
+	//readData();
+	outputSerialData();
 	delay(50);
 }

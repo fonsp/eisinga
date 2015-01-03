@@ -85,14 +85,32 @@ void sensorSetup() {
 }
 
 void calibrate() {
-	lcd.clear();
-	XYZ pm[4];
+	/*XYZ pm[4];
 	XYZ pa[4];
 	for(unsigned char n = '1'; n < '5'; n++) {
 		displayRetrieveRaw(n, &pa[n - '1'], &pm[n - '1']);
 	}
-	aOffset = FindCenter(pa);
-	mOffset = FindCenter(pm);
+	//aOffset = FindCenter(pa);
+	aOffset = XYZ(-135, -239, 1367);
+	mOffset = FindCenter(pm);*/
+	
+	delay(200);
+	
+	while(digitalRead(BTN_PIN) == LOW) {
+		retrieveRaw(&mData);
+		
+		
+		delay(100);
+	}
+	
+	
+	lcd.clear();
+	lcd.setCursor(0,0);
+	lcd.print(aOffset.x);
+	
+	delay(200);
+	pause();
+	
 	
 	#ifdef DEBUG
 	Serial.println("Calibration complete: ");
@@ -118,10 +136,24 @@ void retrieveRaw(XYZ *aData, XYZ *mData) {
 		yAccum += rawy;
 		zAccum += rawz;
 	}
-	*aData = XYZ(double(xAccum)/10.0, double(yAccum)/10.0, double(zAccum)/10.0);
+	*aData = XYZ(double(xAccum)*0.1, double(yAccum)*0.1, double(zAccum)*0.110714);
 	
 	xAccum = yAccum = zAccum = 0;
 	
+	mag.getHeading(&rawx, &rawy, &rawz);
+	for(int i = 0; i < 10; i++) {
+		delay(10);
+		mag.getHeading(&rawx, &rawy, &rawz);
+		xAccum += rawx;
+		yAccum += rawy;
+		zAccum += rawz;
+	}
+	*mData = XYZ(double(xAccum)/10.0, double(yAccum)/10.0, double(zAccum)/10.0);
+}
+
+void retrieveRaw(XYZ *mData) {
+	int32_t xAccum, yAccum, zAccum;
+	xAccum = yAccum = zAccum = 0;
 	mag.getHeading(&rawx, &rawy, &rawz);
 	for(int i = 0; i < 10; i++) {
 		delay(10);
@@ -143,6 +175,27 @@ void displayRetrieveRaw(char n, XYZ *aData, XYZ *mData) {
 	retrieveRaw(aData, mData);
 }
 
+void outputSerialData() {
+	retrieveRaw(&aData, &mData);
+	
+	byte a[4];
+	int32_t n;
+	
+	n = int32_t(mData.x);
+	memcpy(a, &n, sizeof(n));
+	Serial.write(a, 4);
+	n = int32_t(mData.y);
+	memcpy(a, &n, sizeof(n));
+	Serial.write(a, 4);
+	n = int32_t(mData.z);
+	memcpy(a, &n, sizeof(n));
+	Serial.write(a, 4);
+	
+	Serial.write(255);
+	Serial.write(255);
+	Serial.write(255);
+}
+
 void pause() {
 	while(digitalRead(BTN_PIN) == LOW) {
 		delay(10);
@@ -150,7 +203,7 @@ void pause() {
 }
 
 void updateRtc() {
-	
+	lst = 18.697374558 + 24.06570982441908 * rtc.getDateTime().dayFrac();
 }
 
 void readData() {
@@ -159,36 +212,56 @@ void readData() {
 	aData = XYZ::Subtract(aData, aOffset);
 	mData = XYZ::Subtract(mData, mOffset);
 	
-	/*mag.getHeading(&rawx, &rawy, &rawz);
-	x = rawx + xOffsetM;
-	y = rawy + yOffsetM;
-	z = rawz + zOffsetM;
-	roll = atan2(x, y) * 57.29577951308233;*/
+	temp = mData.x;
+	mData.x = -mData.y;
+	mData.y = -temp;
 	
+	// Scale data to unit length?
 	
-	#ifdef DEBUG
-	Serial.print(mData.x); Serial.print(",\t");
-	Serial.print(mData.y); Serial.print(",\t");
-	Serial.println(mData.z); Serial.print(",\t");
-	//Serial.println(roll);
-	#endif
+	roll = atan2(aData.x, aData.z);
+	
+	temp = sqrt(aData.x * aData.x + aData.y * aData.y + aData.z * aData.z);
+	xzlength = sqrt(aData.x * aData.x + aData.z * aData.z);
+	
+	pitch = atan(-aData.y / xzlength);
+	
+	spitch = -aData.y / temp;
+	cpitch = xzlength / temp;
+	
+	sroll = aData.x / xzlength;
+	croll = aData.z / xzlength;
+	
+	yaw = atan2(
+		(mData.z * sroll) - (mData.y * croll), 
+		(mData.x * cpitch) + (mData.y * spitch * sroll) + (mData.z * spitch * croll));
+	
+	dec = asin(spitch * sin(51.643 / 57.29577951308233) + cpitch * cos(51.643 / 57.29577951308233) * cos(yaw));
+	ra = lst - asin(-sin(yaw) * cpitch / cos(dec));
 	
 	lcd.clear();
 	lcd.setCursor(0,0);
-	//lcd.print(atan2(-aData.y, sqrt(aData.z * aData.z + aDta.x * aData.x)) * 57.29578);
-	lcd.print(aData.x);
+	lcd.print(yaw * 57.29577951308233);
+	lcd.setCursor(8,0);
 	lcd.print(",");
-	lcd.print(aData.y);
-	lcd.print(",");
-	lcd.print(aData.z);
+	lcd.print(pitch * 57.29577951308233);
 	lcd.setCursor(0,1);
+	lcd.print(roll * 57.29577951308233);
+	lcd.setCursor(8,1);
+	lcd.print(",");
+	lcd.print(dec * 57.29577951308233);
+	
+	delay(500);
+	
+	lcd.clear();
+	lcd.setCursor(0,0);
 	lcd.print(mData.x);
+	lcd.setCursor(8,0);
 	lcd.print(",");
 	lcd.print(mData.y);
-	lcd.print(",");
+	lcd.setCursor(0,1);
 	lcd.print(mData.z);
 	
-	delay(50);
+	delay(400);
 	
 	blinkState = !blinkState;
 	digitalWrite(LED_PIN, blinkState);

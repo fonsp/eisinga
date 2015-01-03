@@ -11,6 +11,8 @@
 
 void setup() {
 	serialSetup();
+	rtcSetup();
+	updateRtc();
 	lcdSetup();
 	sensorSetup();
 	calibrate();

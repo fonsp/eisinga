@@ -10,7 +10,7 @@ struct XYZ {
 	XYZ(int fx, int fy, int fz);
 	XYZ();
 	
-	static XYZ Substract(XYZ a, XYZ b);
+	static XYZ Subtract(XYZ a, XYZ b);
 };
 
 double Determinant(double **, int);
