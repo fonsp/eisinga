@@ -44,8 +44,8 @@ void lcdSetup();
 void sensorSetup();
 void calibrate();
 void retrieveRaw(XYZ *aData, XYZ *mData);
+void retrieveRaw(XYZ *mData);
 void displayRetrieveRaw(char n, XYZ *aData, XYZ *mData);
-
 void outputSerialData();
 void pause();
 void updateRtc();

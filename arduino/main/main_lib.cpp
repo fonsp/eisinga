@@ -96,28 +96,65 @@ void calibrate() {
 	
 	delay(200);
 	
+	lcd.clear();
+	lcd.setCursor(0,0);
+	lcd.print("Press to cal");
+	pause();
+	
+	double dataVec[4];
 	double xtx[4][4];
-	double xty[4][4];
+	double xty[4];
 	
 	for(int ix = 0; ix < 4; ix++) {
 		for(int iy = 0; iy < 4; iy++) {
-			xtx[ix][iy] = xty[ix][iy] = 0.0;
+			xtx[ix][iy] = 0.0;
 		}
+		xty[ix] = 0.0;
 	}
 	
 	while(digitalRead(BTN_PIN) == LOW) {
 		retrieveRaw(&mData);
 		
+		dataVec[0] = mData.x;
+		dataVec[1] = mData.y;
+		dataVec[2] = mData.z;
+		dataVec[3] = 1.0;
 		
+		double xtxtemp[4][4];
+		
+		Matrix.Multiply(dataVec, dataVec, 4, 1, 4, (double*)xtxtemp);
+		Matrix.Add((double*)xtxtemp, (double*)xtx, 4, 4, (double*)xtx);
+		
+		Matrix.Scale(dataVec, 4, 1, mData.x * mData.x + mData.y * mData.y + mData.z * mData.z);
+		Matrix.Add(dataVec, xty, 4, 1, xty);
 		
 		delay(100);
 	}
 	
+	lcd.clear();
+	lcd.setCursor(0,0);
+	lcd.print(Matrix.Invert((double*)xtx, 4));
+	Matrix.Multiply((double*)xtx, xty, 4, 4, 1, dataVec);
+	
+	mOffset.x = 0.5 * dataVec[0];
+	mOffset.y = 0.5 * dataVec[1];
+	mOffset.z = 0.5 * dataVec[2];
+	
+	aOffset = XYZ(-135, -239, 1367);
+	
+	delay(1000);
 	
 	lcd.clear();
 	lcd.setCursor(0,0);
-	lcd.print(aOffset.x);
-	
+	lcd.print(mOffset.x);
+	lcd.setCursor(8,0);
+	lcd.print(",");
+	lcd.print(mOffset.y);
+	lcd.setCursor(0,1);
+	lcd.print(mOffset.z);
+	lcd.setCursor(8,1);
+	lcd.print(",");
+	lcd.print(sqrt(dataVec[4] + mOffset.x * mOffset.x + mOffset.y * mOffset.y + mOffset.z * mOffset.z));
 	delay(200);
 	pause();
 	
@@ -210,6 +247,7 @@ void pause() {
 	while(digitalRead(BTN_PIN) == LOW) {
 		delay(10);
 	}
+	delay(500);
 }
 
 void updateRtc() {
@@ -226,8 +264,6 @@ void readData() {
 	mData.x = -mData.y;
 	mData.y = -temp;
 	
-	// Scale data to unit length?
-	
 	roll = atan2(aData.x, aData.z);
 	
 	temp = sqrt(aData.x * aData.x + aData.y * aData.y + aData.z * aData.z);
@@ -240,6 +276,11 @@ void readData() {
 	
 	sroll = aData.x / xzlength;
 	croll = aData.z / xzlength;
+	
+	temp = sqrt(mData.x * mData.x + mData.y * mData.y + mData.z * mData.z);
+	mData.x /= temp;
+	mData.y /= temp;
+	mData.z /= temp;
 	
 	yaw = atan2(
 		(mData.z * sroll) - (mData.y * croll), 
@@ -259,19 +300,6 @@ void readData() {
 	lcd.setCursor(8,1);
 	lcd.print(",");
 	lcd.print(dec * 57.29577951308233);
-	
-	delay(500);
-	
-	lcd.clear();
-	lcd.setCursor(0,0);
-	lcd.print(mData.x);
-	lcd.setCursor(8,0);
-	lcd.print(",");
-	lcd.print(mData.y);
-	lcd.setCursor(0,1);
-	lcd.print(mData.z);
-	
-	delay(400);
 	
 	blinkState = !blinkState;
 	digitalWrite(LED_PIN, blinkState);

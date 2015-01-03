@@ -19,6 +19,7 @@ void setup() {
 }
 
 void loop() {
-	readData();
+	//readData();
+	outputSerialData();
 	delay(50);
 }

@@ -16,7 +16,7 @@
 #define mIntensityZ 44961 //Z intensity in nT
 #define mGain 92		  //in nT/LSB (100.000 / gain in LSB/Gauss)
 
-#define DEBUG
+//#define DEBUG
 //#define SETTIME
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);

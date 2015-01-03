@@ -33,14 +33,14 @@ class MatrixMath
 {
 public:
 	//MatrixMath();
-	void Print(float* A, int m, int n, String label);
-	void Copy(float* A, int n, int m, float* B);
-	void Multiply(float* A, float* B, int m, int p, int n, float* C);
-	void Add(float* A, float* B, int m, int n, float* C);
-	void Subtract(float* A, float* B, int m, int n, float* C);
-	void Transpose(float* A, int m, int n, float* C);
-	void Scale(float* A, int m, int n, float k);
-	int Invert(float* A, int n);
+	void Print(double* A, int m, int n, String label);
+	void Copy(double* A, int n, int m, double* B);
+	void Multiply(double* A, double* B, int m, int p, int n, double* C);
+	void Add(double* A, double* B, int m, int n, double* C);
+	void Subtract(double* A, double* B, int m, int n, double* C);
+	void Transpose(double* A, int m, int n, double* C);
+	void Scale(double* A, int m, int n, double k);
+	int Invert(double* A, int n);
 };
 
 extern MatrixMath Matrix;
