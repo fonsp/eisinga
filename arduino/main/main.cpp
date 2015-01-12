@@ -20,6 +20,6 @@ void setup() {
 
 void loop() {
 	readData();
-	//outputSerialData();
+	pause();
 	delay(50);
 }

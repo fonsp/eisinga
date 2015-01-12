@@ -436,5 +436,6 @@ void DS1307::setDateTime24(uint16_t year, uint8_t month, uint8_t day, uint8_t ho
 		df += hh;
 		df /= 24.0;
 		df += date2days();
+		return df;
 	}
 #endif

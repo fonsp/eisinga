@@ -16,11 +16,6 @@ struct XYZ {
 	static XYZ Subtract(XYZ a, XYZ b);
 };
 
-double Determinant(double **, int);
-
-XYZ FindCenter(XYZ a, XYZ b, XYZ c, XYZ d);
-XYZ FindCenter(XYZ *p);
-
 /*
  *  MatrixMath.h Library for Matrix Math
  *
@@ -33,12 +28,8 @@ class MatrixMath
 {
 public:
 	//MatrixMath();
-	void Print(double* A, int m, int n, String label);
-	void Copy(double* A, int n, int m, double* B);
 	void Multiply(double* A, double* B, int m, int p, int n, double* C);
 	void Add(double* A, double* B, int m, int n, double* C);
-	void Subtract(double* A, double* B, int m, int n, double* C);
-	void Transpose(double* A, int m, int n, double* C);
 	void Scale(double* A, int m, int n, double k);
 	int Invert(double* A, int n);
 };

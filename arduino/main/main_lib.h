@@ -16,8 +16,14 @@
 #define mIntensityZ 44961 //Z intensity in nT
 #define mGain 92		  //in nT/LSB (100.000 / gain in LSB/Gauss)
 
+#define longitude 5.225587
+#define latitude 51.642934
+
 //#define DEBUG
+
+#ifdef DEBUG
 //#define SETTIME
+#endif
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
@@ -43,10 +49,10 @@ void rtcSetup();
 void lcdSetup();
 void sensorSetup();
 void calibrate();
-void retrieveRaw(XYZ *aData, XYZ *mData);
-void retrieveRaw(XYZ *mData);
-void displayRetrieveRaw(char n, XYZ *aData, XYZ *mData);
+void retrieveRaw(XYZ *aData, XYZ *mData, double n);
+void retrieveRaw(XYZ *mData, double n);
 void outputSerialData();
 void pause();
 void updateRtc();
 void readData();
+void printCstName(uint16_t pointer);

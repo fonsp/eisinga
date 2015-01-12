@@ -22,3 +22,4 @@ set(Wire_RECURSE True)
 #print_programmer_list()
 
 add_subdirectory(main)
+add_subdirectory(sererom)
