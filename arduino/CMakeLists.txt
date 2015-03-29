@@ -18,7 +18,7 @@ set(Wire_RECURSE True)
 
 project(ArduinoExample C CXX)
 set(Wire_RECURSE True)
-#print_board_list()
+print_board_list()
 #print_programmer_list()
 
 add_subdirectory(main)

@@ -8,18 +8,15 @@
 #include "eMath.cpp"
 #include "math.h"
 
-#define LED_PIN 13
+#define LCD_PIN 13
 #define BTN_PIN 7
 
-#define mIntensityX 19289 //X intensity in nT
-#define mIntensityY 245   //Y intensity in nT
-#define mIntensityZ 44961 //Z intensity in nT
-#define mGain 92		  //in nT/LSB (100.000 / gain in LSB/Gauss)
-
+#define compassDeclination 0.94 // in degrees towards East, visit www.ngdc.noaa.gov/geomag-web/#declination
 #define longitude 5.225587
 #define latitude 51.642934
 
-//#define DEBUG
+#define DEBUG
+#define DISPLAY_COORDS
 
 #ifdef DEBUG
 //#define SETTIME
@@ -32,12 +29,11 @@ HMC5883L mag;
 DS1307 rtc;
 int16_t rawx, rawy, rawz;
 double temp, xzlength, yaw, pitch, spitch, cpitch, roll, sroll, croll, lst, ra, dec;
-bool blinkState = false;
 
 XYZ aData, mData, aOffset, mOffset;
 
-int16_t xScaleA = 310;
-int16_t yScaleA = 310;
+int16_t xScaleA = 263;
+int16_t yScaleA = 262;
 int16_t zScaleA = 280;
 
 uint16_t year;
@@ -46,13 +42,13 @@ double dayfrac;
 
 void serialSetup();
 void rtcSetup();
+void updateRtc();
 void lcdSetup();
 void sensorSetup();
 void calibrate();
+void readData();
 void retrieveRaw(XYZ *aData, XYZ *mData, double n);
 void retrieveRaw(XYZ *mData, double n);
-void outputSerialData();
 void pause();
-void updateRtc();
-void readData();
 void printCstName(uint16_t pointer);
+void outputSerialData();
